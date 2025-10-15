@@ -1,5 +1,5 @@
 <?php
-$mysqli = new mysqli("localhost", "root", "", "opencart_db");
+$mysqli = new mysqli("localhost", "ebinarwe_ocart87", "5xpAS1G3--", "ebinarwe_ocart87");
 if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
@@ -11,7 +11,7 @@ $sql = "SELECT excel_file_name, DATE(data) as log_date,
                SUM(success = 0) as total_failures,
                COUNT(*) as total_rows,
                MAX(data) as last_action
-        FROM oc_logs";
+        FROM oct8_logs";
 
 if ($date_filter) {
     $sql .= " WHERE DATE(data) = '" . $mysqli->real_escape_string($date_filter) . "'";

@@ -3,9 +3,9 @@ header('Content-Type: application/json');
 
 // DB connection
 $host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "opencart_db";
+$user = "ebinarwe_ocart87";
+$pass = "5xpAS1G3--";
+$db   = "ebinarwe_ocart87";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
@@ -22,8 +22,8 @@ if ($model === '') {
 
 $model_esc = $conn->real_escape_string($model);
 $res = $conn->query("SELECT p.product_id, p.model, d.name 
-                     FROM oc_product p
-                     LEFT JOIN oc_product_description d ON p.product_id = d.product_id
+                     FROM oct8_product p
+                     LEFT JOIN oct8_product_description d ON p.product_id = d.product_id
                      WHERE p.model = '$model_esc'");
 
 if ($res && $res->num_rows > 0) {

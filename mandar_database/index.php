@@ -2,7 +2,13 @@
 session_start();
 
 // DB connection
-$mysqli = new mysqli("localhost", "root", "", "opencart_db");
+$mysqli = new mysqli(
+    "localhost",             // DB_HOSTNAME
+    "ebinarwe_ocart87",      // DB_USERNAME
+    "5xpAS1G3--",            // DB_PASSWORD
+    "ebinarwe_ocart87"       // DB_DATABASE
+);
+
 if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
@@ -39,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
             if (!is_numeric($price)) $errors[] = "Price must be numeric.";
 
             // Check for duplicate model
-            $check = $mysqli->query("SELECT product_id FROM oc_product WHERE model = '" . $mysqli->real_escape_string($model) . "'");
+            $check = $mysqli->query("SELECT product_id FROM oct8_product WHERE model = '" . $mysqli->real_escape_string($model) . "'");
             if ($check && $check->num_rows > 0) {
                 $errors[] = "Duplicate model: $model.";
             }
@@ -52,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
             elseif ($tax === "3") $tax_class_id = 0;  // IVA ISENTO
 
             if (empty($errors)) {
-                // Insert into oc_product
-                $mysqli->query("INSERT INTO oc_product SET 
+                // Insert into oct8_product
+                $mysqli->query("INSERT INTO oct8_product SET 
                     model = '" . $mysqli->real_escape_string($model) . "', 
                     sku = '" . $mysqli->real_escape_string($sku) . "',
                     price = '" . (float)$price . "',
@@ -64,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
 
                 $product_id = $mysqli->insert_id;
 
-                // Insert into oc_product_description
-                $mysqli->query("INSERT INTO oc_product_description SET 
+                // Insert into oct8_product_description
+                $mysqli->query("INSERT INTO oct8_product_description SET 
                     product_id = " . (int)$product_id . ",
                     language_id = 1,
                     name = '" . $mysqli->real_escape_string($name) . "',
@@ -73,14 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                 ");
 
                 // Link product to store
-                $mysqli->query("INSERT INTO oc_product_to_store SET 
+                $mysqli->query("INSERT INTO oct8_product_to_store SET 
                     product_id = " . (int)$product_id . ",
                     store_id = 0
                 ");
 
                 // Insert SEO keyword
                 if (!empty($seo)) {
-                    $mysqli->query("INSERT INTO oc_seo_url SET 
+                    $mysqli->query("INSERT INTO oct8_seo_url SET 
                         store_id = 0,
                         language_id = 1,
                         `key` = 'product_id',
@@ -90,22 +96,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                     ");
                 }
 
-                // ✅ Log success
-                $mysqli->query("INSERT INTO oc_logs SET 
+                // Log success
+                $mysqli->query("INSERT INTO oct8_logs SET 
                     success = 1,
                     log = 'Inserted product $name (ID $product_id)',
-                    excel_file_name = '" . $mysqli->real_escape_string($filename) . "'
+                    excel_file_name = '" . $mysqli->real_escape_string($filename) . "',
+                    data = NOW()
                 ");
 
                 $_SESSION['import_log'][] = "✅ Inserted product: $name (ID $product_id)";
             } else {
-                // ❌ Log failure
+                // Log failure
                 $error_msg = implode("; ", $errors);
-                $mysqli->query("INSERT INTO oc_logs SET 
+                $mysqli->query("INSERT INTO oct8_logs SET 
                     success = 0,
                     error = '" . $mysqli->real_escape_string($error_msg) . "',
                     log = 'Failed to insert product with model $model',
-                    excel_file_name = '" . $mysqli->real_escape_string($filename) . "'
+                    excel_file_name = '" . $mysqli->real_escape_string($filename) . "',
+                    data = NOW()
                 ");
 
                 $_SESSION['import_log'][] = "❌ Skipped ($model): $error_msg";
@@ -117,7 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     }
     header("Location: index.php?uploaded=1");
     exit;
-
 }
 ?>
 
@@ -144,7 +151,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     <?php endif; ?>
     <a href="reports.php" target="_blank">View Detailed Reports</a> | 
     <a href="current_reports.php" target="_blank">View Current Reports</a>
-
-
 </body>
 </html>
