@@ -1,0 +1,12 @@
+sha - Secure Hash Algorithm 256-bit
+    Hash de criptografia
+    takes any input and produces a fixed-length 256-bit (32-byte) output
+Example
+    Input:  "hello"
+    Output: 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+
+
+gcc -o agent agent.c -lmysqlclient -lcrypto
+
+
+http://ebinar-example-database.infinityfree.me/
