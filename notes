@@ -11,3 +11,6 @@ gcc -o agent agent.c -lmysqlclient -lcrypto
 
 http://ebinar-example-database.infinityfree.me/
 http://rolos.com.pt/loja/mandar_database/
+
+
+Adicionar o nome do curso na instrodução do powerpoint
